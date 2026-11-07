@@ -26,6 +26,14 @@ button { font: inherit; cursor: pointer; }
 .screen { display: none; flex: 1; flex-direction: column; }
 .screen.active { display: flex; }
 
+.id-input{
+  width:70%; max-width: 260px; border-box; margin:0 auto 12px;
+  display: block;
+  padding:14px 16px; border:2.5px solid #d6ccfb; border-radius:14px;
+  font-size:16px; outline:none;
+}
+.id-input:focus{ border-color:#8c7bed; }
+
 /* ---------- 테마 ---------- */
 .theme-purple {
   --bg: #faf5fd; --accent: #573e9e; --pill: #e6e0fb; --pilltext: #6f66c0;

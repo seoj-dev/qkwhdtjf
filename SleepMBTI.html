@@ -18,6 +18,9 @@
     <h1 class="start-title">수면 방해 패턴 테스트</h1>
     <p class="start-lead">18개의 질문으로 나의 수면 방해 패턴을 검사하고<br>내 수면 방해 요인은 무엇인지 알아봐요</p>
     <img class="hero" src="assets/hero.webp" alt="침대에 나란히 누운 세 친구">
+    <br>
+    <input id="nickname" class="id-input" type="text" placeholder="아이디를 입력하세요" maxlength="20">
+    <br>
     <button id="btn-start" class="btn-start" type="button">
       <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M7 4.5v15l12-7.5z" fill="currentColor"/></svg>
       <span>테스트 시작하기</span>
@@ -78,7 +81,6 @@
           <span class="face back"><img id="img-back" alt=""></span>
         </button>
         <div class="fx" id="fx" aria-hidden="true"></div>
-        <div class="poof" id="poof" aria-hidden="true">뾰로롱~!</div>
       </div>
       <p class="r-hint" id="r-hint">카드를 눌러 뒤집어 보세요</p>
 
@@ -110,6 +112,7 @@
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/data.js"></script>
 <script src="js/app.js"></script>
 </body>

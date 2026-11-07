@@ -1,10 +1,17 @@
 /* =========================================================
    SLEEP ON TIME - 동작 로직
    (문항/문구는 data.js, 디자인은 css/style.css)
-   응답은 이 브라우저 안에서만 계산되며 저장·전송하지 않아요.
+   결과가 나오면 Supabase(results 테이블)에 저장돼요.
+   닉네임이 각 응답을 구분하는 고유 키이며, 중복은 허용하지 않아요.
    ========================================================= */
 (function () {
   "use strict";
+
+  /* ---------- Supabase 연결 ---------- */
+  var db = window.supabase.createClient(
+    "https://tohkhgvrjizihuafxufc.supabase.co",   // ← Project URL 로 교체
+    "sb_publishable_3f5ZEOyYErkFiicx3y2QkQ_uodKdRhh"         // ← anon public 키 로 교체
+  );
 
   var $ = function (s) { return document.querySelector(s); };
   var TYPE_KEYS = Object.keys(TYPES);                 // ["A".."F"]
@@ -13,6 +20,7 @@
 
   var idx = 0;                                        // 현재 문항 번호
   var answers = [];                                   // 문항별 점수(0~3)
+  var nickname = "";                                  // 입력받은 닉네임(고유 키)
   var current = { type: "A", flipped: false };
 
   /* ---------- 화면 전환 ---------- */
@@ -24,6 +32,26 @@
   function reset() {
     idx = 0; answers = [];
     show("start");
+  }
+
+  /* ---------- 테스트 시작 (닉네임 중복 확인) ---------- */
+  function startTest() {
+    var el = $("#nickname");
+    var nick = el ? (el.value || "").trim() : "";
+    if (!nick) { toast("닉네임을 입력해 주세요"); return; }
+
+    var btn = $("#btn-start");
+    btn.disabled = true;
+    db.from("results").select("user_id").eq("user_id", nick).maybeSingle()
+      .then(function (res) {
+        btn.disabled = false;
+        if (res.error) { toast("확인 중 오류가 났어요. 다시 시도해 주세요"); return; }
+        if (res.data) { toast("이미 사용 중인 닉네임이에요"); return; }
+        nickname = nick;
+        idx = 0; answers = [];
+        renderQuestion();
+        show("quiz");
+      });
   }
 
   /* ---------- 문항 ---------- */
@@ -79,6 +107,22 @@
     return s;                                          // 유형별 0~9점
   }
 
+  /* ---------- 결과 저장 (Supabase) ---------- */
+  function saveResult() {
+    if (!nickname) return;
+    var resultType = result.primary.map(function (k) { return TYPES[k].name; }).join(", ");
+    db.from("results").insert({
+      user_id: nickname,
+      result_type: resultType,
+      detail: result.scores
+    }).then(function (res) {
+      if (res.error) {
+        if (res.error.code === "23505") toast("닉네임이 방금 중복되었어요. 다시 시도해 주세요");
+        else console.warn("저장 실패:", res.error.message);
+      }
+    });
+  }
+
   /* ---------- 결과 ---------- */
   var result = { scores: {}, primary: [], secondary: [] };
 
@@ -105,6 +149,7 @@
     $("#result-empty").hidden = true;
     $("#result-body").hidden = false;
     renderType(primary[0], true);
+    saveResult();                                      // ← 결과 저장
   }
 
   function renderType(k, intro) {
@@ -234,8 +279,6 @@
 
     var stage = $("#card-stage");
     stage.classList.remove("pop"); void stage.offsetWidth; stage.classList.add("pop");
-    var poof = $("#poof");
-    poof.classList.remove("go"); void poof.offsetWidth; poof.classList.add("go");
 
     clearTimeout(burst._t);
     burst._t = setTimeout(function () { fx.innerHTML = ""; stage.classList.remove("pop"); }, 1400);
@@ -296,7 +339,7 @@
   }
 
   /* ---------- 이벤트 연결 ---------- */
-  $("#btn-start").addEventListener("click", function () { idx = 0; answers = []; renderQuestion(); show("quiz"); });
+  $("#btn-start").addEventListener("click", startTest);
   $("#btn-next").addEventListener("click", next);
   $("#btn-prev").addEventListener("click", prev);
   $("#card").addEventListener("click", flip);
