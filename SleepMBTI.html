@@ -1,1 +1,116 @@
-//바종설 수면 MBTI 웹사이트
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#d6ccfb">
+  <meta name="description" content="18개의 질문으로 나의 수면 방해 패턴을 알아보는 SLEEP ON TIME 테스트">
+  <title>SLEEP ON TIME · 수면 방해 패턴 테스트</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="phone">
+
+  <!-- 1. 시작 화면 -->
+  <section id="screen-start" class="screen active">
+    <div class="brand-pill"><img src="assets/logo.webp" alt="SLEEP ON TIME"></div>
+    <h1 class="start-title">수면 방해 패턴 테스트</h1>
+    <p class="start-lead">18개의 질문으로 나의 수면 방해 패턴을 검사하고<br>내 수면 방해 요인은 무엇인지 알아봐요</p>
+    <img class="hero" src="assets/hero.webp" alt="침대에 나란히 누운 세 친구">
+    <button id="btn-start" class="btn-start" type="button">
+      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M7 4.5v15l12-7.5z" fill="currentColor"/></svg>
+      <span>테스트 시작하기</span>
+      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <p class="start-meta">약 2분 · 18문항 · 브라우저 안에서만 처리</p>
+    <div class="steps">
+      <div class="step"><img src="assets/icon-check.webp" alt=""><b>질문에 답하고</b><span>나의 수면 습관과 생활 패턴을 간단히 알려주세요.</span></div>
+      <i class="chev" aria-hidden="true">&rsaquo;</i>
+      <div class="step"><img src="assets/icon-chart.webp" alt=""><b>패턴을 분석하면</b><span>수면을 방해하는 주요 원인을 확인할 수 있어요.</span></div>
+      <i class="chev" aria-hidden="true">&rsaquo;</i>
+      <div class="step"><img src="assets/icon-tip.webp" alt=""><b>나에게 맞는 팁까지!</b><span>오늘부터 바로 실천할 수 있는 작은 개선 방법을 알려드려요.</span></div>
+    </div>
+  </section>
+
+  <!-- 2. 문항 화면 -->
+  <section id="screen-quiz" class="screen theme-purple">
+    <header class="topbar">
+      <img class="logo" src="assets/logo.webp" alt="SLEEP ON TIME">
+      <button type="button" class="btn-exit" data-action="exit">
+        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M10 4H5v16h5M14 8l4 4-4 4M18 12H9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>나가기
+      </button>
+    </header>
+    <div class="quiz-body">
+      <div class="progress" aria-hidden="true"><i id="progress-fill"></i></div>
+      <p class="q-count"><b id="q-now">01</b> / <span id="q-total">18</span></p>
+      <span class="pill" id="q-pill">QUESTION 01</span>
+      <h2 class="q-text" id="q-text"></h2>
+      <p class="q-sub">평소 나에게 가장 가까운 답변을 확인해주세요.</p>
+      <img class="q-girl" src="assets/question-girl.webp" alt="">
+      <div class="choices" id="choices" role="radiogroup" aria-label="답변 선택"></div>
+      <div class="q-nav">
+        <button type="button" class="btn-outline" id="btn-prev">이전</button>
+        <button type="button" class="btn-fill" id="btn-next" disabled>다음</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. 결과 화면 -->
+  <section id="screen-result" class="screen">
+    <header class="topbar">
+      <img class="logo" src="assets/logo.webp" alt="SLEEP ON TIME">
+      <button type="button" class="btn-exit" data-action="exit">
+        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M10 4H5v16h5M14 8l4 4-4 4M18 12H9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>나가기
+      </button>
+    </header>
+
+    <div class="result-body" id="result-body">
+      <span class="pill" id="r-pill">TYPE A</span>
+      <h2 class="r-name" id="r-name"></h2>
+      <p class="r-quote" id="r-quote"></p>
+
+      <div class="r-tabs" id="r-tabs" hidden></div>
+
+      <div class="card-stage" id="card-stage">
+        <button type="button" class="card" id="card" aria-label="카드를 눌러 뒤집기">
+          <span class="face front"><img id="img-front" alt=""></span>
+          <span class="face back"><img id="img-back" alt=""></span>
+        </button>
+        <div class="fx" id="fx" aria-hidden="true"></div>
+        <div class="poof" id="poof" aria-hidden="true">뾰로롱~!</div>
+      </div>
+      <p class="r-hint" id="r-hint">카드를 눌러 뒤집어 보세요</p>
+
+      <button type="button" class="btn-save" id="btn-save">이미지 저장하기</button>
+
+      <div class="guide" id="guide"></div>
+
+      <div class="scores" id="scores"></div>
+
+      <div class="r-actions">
+        <button type="button" class="btn-share" id="btn-share" aria-label="공유하기">
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="6" cy="12" r="2.4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="18" cy="5.5" r="2.4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="18" cy="18.5" r="2.4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8.2 10.8l7.6-4M8.2 13.2l7.6 4" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+        </button>
+        <button type="button" class="btn-restart" id="btn-restart">처음부터 다시하기</button>
+      </div>
+      <p class="disclaimer" id="disclaimer"></p>
+    </div>
+
+    <!-- 두드러지는 패턴이 없을 때 -->
+    <div class="result-body" id="result-empty" hidden>
+      <span class="pill">RESULT</span>
+      <h2 class="r-name">두드러지는 방해 패턴이 없어요</h2>
+      <p class="r-quote">지금의 수면 습관을 잘 유지해 보세요</p>
+      <div class="r-actions only"><button type="button" class="btn-restart" id="btn-restart-empty">처음부터 다시하기</button></div>
+      <p class="disclaimer" id="disclaimer-empty"></p>
+    </div>
+  </section>
+
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
