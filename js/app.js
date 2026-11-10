@@ -107,6 +107,17 @@
     return s;                                          // 유형별 0~9점
   }
 
+    /* ---------- 동점 처리(B): 하나로 확정 ---------- */
+  // 각 유형이 '최고 점수(매우 그렇다)'로 답한 문항 수
+  function intensity(k) {
+    var top = CHOICES.length - 1;        // 최고 선택지 점수
+    var c = 0;
+    QUESTIONS.forEach(function (q, i) { if (q[0] === k && answers[i] === top) c++; });
+    return c;
+  }
+  // 그래도 동점일 때 보여줄 우선순위(원하는 순서로 바꾸면 돼요)
+  var PRIORITY = ["A", "B", "C", "D", "E", "F"];
+
   /* ---------- 결과 저장 (Supabase) ---------- */
   function saveResult() {
     if (!nickname) return;
@@ -131,6 +142,13 @@
     var vals = TYPE_KEYS.map(function (k) { return s[k]; });
     var max = Math.max.apply(null, vals);
     var primary = TYPE_KEYS.filter(function (k) { return s[k] === max; });
+    if (primary.length > 1) {
+      primary.sort(function (a, b) {
+        return intensity(b) - intensity(a)                  // 1순위: 강한 동의 수
+            || PRIORITY.indexOf(a) - PRIORITY.indexOf(b);   // 2순위: 우선순위
+      });
+      primary = [primary[0]];
+    }
     var rest = vals.filter(function (v) { return v < max; });
     var second = rest.length ? Math.max.apply(null, rest) : -1;
     var secondary = second > 0 ? TYPE_KEYS.filter(function (k) { return s[k] === second; }) : [];
